@@ -1,1 +1,2 @@
-
+# Ignore server build folder
+server/build
