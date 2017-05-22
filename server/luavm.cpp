@@ -7,6 +7,8 @@
 #include <websocketpp/server.hpp>
 #include <websocketpp/common/thread.hpp>
 
+#include <boost/program_options.hpp>
+
 extern "C" {
 	#include "lua.h"
 	#include "lauxlib.h"
@@ -23,7 +25,9 @@ class LuaSandBox {
 
 			luaL_openlibs(L);
 			// Load lua library functions
-			luaL_dofile(L, "./library.lua");
+			if (luaL_dofile(L, "./library.lua") != 0) {
+				throw std::runtime_error("Coudln't open libary.lua.");
+			};
 		}
 
 		std::string runScript(std::string chunk) {
@@ -150,7 +154,6 @@ class LuaSandboxServer {
 
 		void onMessage(Connection con, Server::message_ptr msg) {
 			if (!validateMessage(msg)) return;
-
 			{
 				LockGuard guard(requestLock);
 				queue.emplace(con, msg->get_payload());
@@ -171,15 +174,22 @@ class LuaSandboxServer {
 				queue.pop();
 				lock.unlock();
 
-				std::cout << "Thread #" << threadId << ": executing code." << std::endl;
-				Server::connection_ptr conptr = server.get_con_from_hdl(request.first);
-				if (conptr) {
-					try {
-						std::string result = sandbox.runScript(request.second);
-						server.send(request.first, result.c_str(), websocketpp::frame::opcode::text);
-					} catch (...) {
+				try {
+					Server::connection_ptr conptr = server.get_con_from_hdl(request.first);
+					if (conptr) {
+						{
+							LockGuard guard(sendLock);
+							server.ping(request.first, "are you alive?");
+							//std::cout << "Thread #" << threadId << " executing code." << std::endl;
+						}
 
+						std::string result = sandbox.runScript(request.second);
+
+						LockGuard guard(sendLock);
+						server.send(request.first, result.c_str(), websocketpp::frame::opcode::text);
 					}
+				} catch (...) {
+
 				}
 			}
 		}
@@ -194,23 +204,48 @@ class LuaSandboxServer {
 		Server server;
 		RequestQueue queue;
 		Mutex requestLock;
+		Mutex sendLock;
 		ConditionVariable requestCondition;
 
 
 };
 
 int main(int argc, const char *argv[]) {
+	int threads;
+	int port;
+
+	boost::program_options::options_description desc("Allowed options");
+	desc.add_options()
+	    ("help", "produce help message")
+	    ("threads", boost::program_options::value<int>(&threads)->default_value(5), "number of worker threads")
+	    ("port", boost::program_options::value<int>(&port)->default_value(6000), "server port");
+
+	boost::program_options::variables_map vm;
+	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
+	boost::program_options::notify(vm);
+
+	if (vm.count("help")) {
+	    std::cout << desc << std::endl;
+	    return 1;
+	}
+
+	if (threads <= 0) threads = 1;
+
+	std::cout << "Server running on port " << port << " with " << threads << " worker threads." << std::endl;
+
 	LuaSandboxServer server;
-	
+
 	std::vector<LuaSandboxServer::Thread> workerThreads;
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < threads; i++) {
 		LuaSandboxServer::Thread worker(websocketpp::lib::bind(&LuaSandboxServer::processQueue, &server, i));
 		workerThreads.emplace_back(std::move(worker));
 	}
 
-	server.run(6000);
+	server.run(port);
 
 	for (auto& worker : workerThreads) {
 		worker.join();
 	}
+
+	return 0;
 }
