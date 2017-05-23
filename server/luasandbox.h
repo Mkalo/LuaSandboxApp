@@ -14,7 +14,7 @@ class LuaSandbox {
 		LuaSandbox();
 		~LuaSandbox();
 
-		std::string runScript(std::string chunk, int timeout = 10);
+		std::string runScriptSafely(std::string chunk, int timeout = 30);
 
 	private:
 		lua_State* L;

@@ -34,15 +34,17 @@ std::string LuaSandbox::runScriptSafely(std::string chunk, int timeout) {
 	}
 
 	// Call setTimeout
-	lua_getglobal(L, "setTimeout");
-	if (!lua_isfunction(L, -1)) {
-		lua_pop(L, 1);
-		return "Internal Error: couldn't run this script.";
-	}
-	lua_pushinteger(L, timeout);
-	if (lua_pcall(L, 1, 0, 0) != 0) {
-		lua_pop(L, 1);
-		return "Internal Error: couldn't run this script.";
+	if (timeout > 0) {
+		lua_getglobal(L, "setTimeout");
+		if (!lua_isfunction(L, -1)) {
+			lua_pop(L, 1);
+			return "Internal Error: couldn't run this script.";
+		}
+		lua_pushinteger(L, timeout);
+		if (lua_pcall(L, 1, 0, 0) != 0) {
+			lua_pop(L, 1);
+			return "Internal Error: couldn't run this script.";
+		}
 	}
 
 	// Load setfenv to use in loaded function

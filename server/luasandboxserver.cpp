@@ -47,7 +47,7 @@ void LuaSandboxServer::processQueue(int threadId) {
 					std::cout << "Thread #" << threadId << " executing code." << std::endl;
 				}
 
-				std::string result = sandbox.runScript(request.second);
+				std::string result = sandbox.runScriptSafely(request.second, 0);
 
 				LockGuard guard(sendLock);
 				server.send(request.first, result.c_str(), websocketpp::frame::opcode::text);
