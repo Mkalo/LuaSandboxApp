@@ -19,7 +19,7 @@ class LuaSandbox {
 	private:
 		lua_State* L;
 
-		static int traceback (lua_State *L);
+		static int traceback (lua_State* L);
 };
 
 #endif

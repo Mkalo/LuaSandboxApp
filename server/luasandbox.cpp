@@ -89,7 +89,7 @@ std::string LuaSandbox::runScriptSafely(std::string chunk, int timeout) {
 	return ret;
 }
 
-int LuaSandbox::traceback(lua_State *L) {
+int LuaSandbox::traceback(lua_State* L) {
 	if (!lua_isstring(L, 1)) return 1;
 
 	lua_getglobal(L, "debug");

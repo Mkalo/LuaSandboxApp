@@ -31,8 +31,7 @@ int main(int argc, const char *argv[]) {
 
 	std::vector<LuaSandboxServer::Thread> workerThreads;
 	for (int i = 0; i < threads; i++) {
-		LuaSandboxServer::Thread worker(websocketpp::lib::bind(&LuaSandboxServer::processQueue, &server, i));
-		workerThreads.emplace_back(std::move(worker));
+		workerThreads.emplace_back(websocketpp::lib::bind(&LuaSandboxServer::processQueue, &server, i));
 	}
 
 	server.run(port);

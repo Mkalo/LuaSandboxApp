@@ -51,6 +51,7 @@ void LuaSandboxServer::processQueue(int threadId) {
 
 				LockGuard guard(sendLock);
 				server.send(request.first, result.c_str(), websocketpp::frame::opcode::text);
+				std::cout << "Thread #" << threadId << " finished executing." << std::endl;
 			}
 		} catch (...) {
 
