@@ -6,15 +6,15 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-public class SaveActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_save);
+        setContentView(R.layout.activity_settings);
 
-        Toolbar saveToolbar = (Toolbar) findViewById(R.id.saveToolbar);
-        setSupportActionBar(saveToolbar);
+        Toolbar settingsToolbar = (Toolbar) findViewById(R.id.settingsToolbar);
+        setSupportActionBar(settingsToolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);

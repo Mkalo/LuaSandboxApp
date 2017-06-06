@@ -12,6 +12,7 @@ public class OpenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open);
+
         Toolbar openFileToolbar = (Toolbar) findViewById(R.id.openFileToolbar);
         setSupportActionBar(openFileToolbar);
         ActionBar actionBar = getSupportActionBar();

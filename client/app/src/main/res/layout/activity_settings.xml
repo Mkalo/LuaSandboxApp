@@ -2,11 +2,11 @@
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/openFileToolbar"
+    android:id="@+id/settingsToolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="?attr/colorPrimary"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-    tools:context="uff.ic.luasandbox.OpenActivity">
+    tools:context="uff.ic.luasandbox.SettingsActivity">
 
 </android.support.v7.widget.Toolbar>
