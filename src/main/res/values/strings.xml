@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">LuaSandbox</string>
+    <string name="opentoolbar_title">Select a file to open</string>
+    <string name="savetoolbar_title">Select a folder</string>
+    <string name="outputtoolbar_title">Run</string>
+    <string name="settingstoolbar_title">Settings</string>
+</resources>
